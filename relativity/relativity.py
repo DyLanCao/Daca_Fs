@@ -70,21 +70,21 @@ class RelativityGUI(QtGui.QWidget):
         self.worldlinePlots = pg.GraphicsLayoutWidget()
         self.splitter2.addWidget(self.worldlinePlots)
         
-        self.animationPlots = pg.GraphicsLayoutWidget()
-        self.splitter2.addWidget(self.animationPlots)
+#        self.animationPlots = pg.GraphicsLayoutWidget()
+#        self.splitter2.addWidget(self.animationPlots)
         
         self.splitter2.setSizes([int(self.height()*0.8), int(self.height()*0.2)])
         
-        self.inertWorldlinePlot = self.worldlinePlots.addPlot()
+        #self.inertWorldlinePlot = self.worldlinePlots.addPlot()
         self.refWorldlinePlot = self.worldlinePlots.addPlot()
         
-        self.inertAnimationPlot = self.animationPlots.addPlot()
-        self.inertAnimationPlot.setAspectLocked(1)
-        self.refAnimationPlot = self.animationPlots.addPlot()
-        self.refAnimationPlot.setAspectLocked(1)
+#        self.inertAnimationPlot = self.animationPlots.addPlot()
+#        self.inertAnimationPlot.setAspectLocked(1)
+#        self.refAnimationPlot = self.animationPlots.addPlot()
+#        self.refAnimationPlot.setAspectLocked(1)
         
-        self.inertAnimationPlot.setXLink(self.inertWorldlinePlot)
-        self.refAnimationPlot.setXLink(self.refWorldlinePlot)
+        #self.inertAnimationPlot.setXLink(self.inertWorldlinePlot)
+#        self.refAnimationPlot.setXLink(self.refWorldlinePlot)
 
     def recalculate(self):
         ## build 2 sets of clocks
@@ -98,8 +98,8 @@ class RelativityGUI(QtGui.QWidget):
         dt = self.animDt * self.params['Animation Speed']
         sim1 = Simulation(clocks1, ref=None, duration=self.params['Duration'], dt=dt)
         sim1.run()
-        sim1.plot(self.inertWorldlinePlot)
-        self.inertWorldlinePlot.autoRange(padding=0.1)
+        #sim1.plot(self.inertWorldlinePlot)
+        #self.inertWorldlinePlot.autoRange(padding=0.1)
         
         ## reference simulation
         ref = self.params['Reference Frame']
@@ -111,18 +111,18 @@ class RelativityGUI(QtGui.QWidget):
         
         
         ## create animations
-        self.refAnimationPlot.clear()
-        self.inertAnimationPlot.clear()
+#        self.refAnimationPlot.clear()
+#        self.inertAnimationPlot.clear()
         self.animTime = 0
         
         self.animations = [Animation(sim1), Animation(sim2)]
-        self.inertAnimationPlot.addItem(self.animations[0])
-        self.refAnimationPlot.addItem(self.animations[1])
+#        self.inertAnimationPlot.addItem(self.animations[0])
+#        self.refAnimationPlot.addItem(self.animations[1])
         
         ## create lines representing all that is visible to a particular reference
         #self.inertSpaceline = Spaceline(sim1, ref)
         #self.refSpaceline = Spaceline(sim2)
-        self.inertWorldlinePlot.addItem(self.animations[0].items[ref].spaceline())
+        #self.inertWorldlinePlot.addItem(self.animations[0].items[ref].spaceline())
         self.refWorldlinePlot.addItem(self.animations[1].items[ref].spaceline())
         
         

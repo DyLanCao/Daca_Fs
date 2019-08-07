@@ -12,7 +12,7 @@ from relativity import RelativityGUI
 pg.mkQApp()
 win = RelativityGUI()
 win.setWindowTitle("Relativity!")
-win.resize(1100,700)
+win.resize(1200,800)
 win.show()
 win.loadPreset(None, 'Twin Paradox (grid)')
 
