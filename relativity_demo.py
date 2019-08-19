@@ -14,7 +14,7 @@ win = RelativityGUI()
 win.setWindowTitle("Relativity!")
 win.resize(1200,800)
 win.show()
-win.loadPreset(None, 'Twin Paradox (grid)')
+#win.loadPreset(None, 'Grid Expansion')
 
 ## Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':

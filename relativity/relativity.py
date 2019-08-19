@@ -9,6 +9,7 @@ import pyqtgraph.configfile
 from pyqtgraph.python2_3 import xrange
 
 
+
 class RelativityGUI(QtGui.QWidget):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -50,8 +51,9 @@ class RelativityGUI(QtGui.QWidget):
             self.params.param('Load Preset..').setLimits(['']+presets)
         
         
-        
-        
+        t = QtCore.QTimer()
+        t.timeout.connect(self.updateData)
+        t.start(50)
     def setupGUI(self):
         self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
@@ -69,7 +71,9 @@ class RelativityGUI(QtGui.QWidget):
         
         self.worldlinePlots = pg.GraphicsLayoutWidget()
         self.splitter2.addWidget(self.worldlinePlots)
+        #plot1 = self.worldlinePlots.addPlot()
         
+
 #        self.animationPlots = pg.GraphicsLayoutWidget()
 #        self.splitter2.addWidget(self.animationPlots)
         
@@ -78,6 +82,16 @@ class RelativityGUI(QtGui.QWidget):
         #self.inertWorldlinePlot = self.worldlinePlots.addPlot()
         self.refWorldlinePlot = self.worldlinePlots.addPlot()
         
+		## make interesting distribution of values
+        vals = np.hstack([np.random.normal(size=500), np.random.normal(size=260, loc=4)])
+
+		## compute standard histogram
+        y,x = np.histogram(vals, bins=np.linspace(-3, 8, 40))
+
+		## Using stepMode=True causes the plot to draw two lines for each sample.
+		## notice that len(x) == len(y)+1
+        self.refWorldlinePlot.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
+
 #        self.inertAnimationPlot = self.animationPlots.addPlot()
 #        self.inertAnimationPlot.setAspectLocked(1)
 #        self.refAnimationPlot = self.animationPlots.addPlot()
@@ -179,6 +193,27 @@ class RelativityGUI(QtGui.QWidget):
     def loadPreset(self, param, preset):
         if preset == '':
             return
+        path = os.path.abspath(os.path.dirname(__file__))
+        fn = os.path.join(path, 'presets', preset+".cfg")
+        state = pg.configfile.readConfigFile(fn)
+        self.loadState(state)
+    def rand(self, n):
+        data = np.random.random(n)
+        data[int(n*0.1):int(n*0.13)] += .5
+        data[int(n*0.18)] += 2
+        data[int(n*0.1):int(n*0.13)] *= 5
+        data[int(n*0.18)] *= 20
+        return data, np.arange(n, n+len(data)) / float(n)
+    def updateData(self):
+        yd, xd = self.rand(10000)
+        print("%d %d",yd,xd)
+        p1 = pg.PlotDataItem()
+        p1.setData(y=yd, x=xd)
+        vb = pg.ViewBox()
+        vb.addItem(p1)
+        vb.autoRange()
+    
+    def loadRandom(self, param):
         path = os.path.abspath(os.path.dirname(__file__))
         fn = os.path.join(path, 'presets', preset+".cfg")
         state = pg.configfile.readConfigFile(fn)
@@ -767,7 +802,8 @@ if __name__ == '__main__':
     win.setWindowTitle("Relativity!")
     win.show()
     win.resize(1100,700)
-    
+   
+
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
     
