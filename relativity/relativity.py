@@ -51,9 +51,10 @@ class RelativityGUI(QtGui.QWidget):
             self.params.param('Load Preset..').setLimits(['']+presets)
         
         
-        t = QtCore.QTimer()
-        t.timeout.connect(self.updateData)
-        t.start(50)
+        self.sinkTimer = QtCore.QTimer()
+        self.sinkTimer.timeout.connect(self.updateData)
+        self.sinkTimer.start(500)
+        self.flag = False
     def setupGUI(self):
         self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0,0,0,0)
@@ -83,14 +84,19 @@ class RelativityGUI(QtGui.QWidget):
         self.refWorldlinePlot = self.worldlinePlots.addPlot()
         
 		## make interesting distribution of values
-        vals = np.hstack([np.random.normal(size=500), np.random.normal(size=260, loc=4)])
+        #vals = np.hstack([np.random.normal(size=500), np.random.normal(size=260, loc=4)])
 
 		## compute standard histogram
-        y,x = np.histogram(vals, bins=np.linspace(-3, 8, 40))
+        #y,x = np.histogram(vals, bins=np.linspace(-3, 8, 40))
+        #y,x = np.histogram(vals, bins=np.linspace(-3, 8, 40))
+        #y,x = np.histogram(vals, bins=np.linspace(-3, 8, 40))
+        x = np.linspace(-50, 50, 1000)
+        y = np.sin(x) / x
 
 		## Using stepMode=True causes the plot to draw two lines for each sample.
 		## notice that len(x) == len(y)+1
-        self.refWorldlinePlot.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
+        #self.refWorldlinePlot.plot(x, y, name="sink",title="test")
+        #self.refWorldlinePlot.plot(x, y, stepMode=True, fillLevel=0, brush=(0,0,255,150))
 
 #        self.inertAnimationPlot = self.animationPlots.addPlot()
 #        self.inertAnimationPlot.setAspectLocked(1)
@@ -205,13 +211,19 @@ class RelativityGUI(QtGui.QWidget):
         data[int(n*0.18)] *= 20
         return data, np.arange(n, n+len(data)) / float(n)
     def updateData(self):
-        yd, xd = self.rand(10000)
-        print("%d %d",yd,xd)
-        p1 = pg.PlotDataItem()
-        p1.setData(y=yd, x=xd)
-        vb = pg.ViewBox()
-        vb.addItem(p1)
-        vb.autoRange()
+        self.refWorldlinePlot.clear()
+        #self.refWorldlinePlot.autoRange()
+        x = np.linspace(-50, 50, 1000)
+        if self.flag == False:
+            y = np.sin(x)
+            self.flag = True
+        else:
+            y = np.sin(x) / x
+            self.flag = False
+        print("flag:{}".format(self.flag))
+		## Using stepMode=True causes the plot to draw two lines for each sample.
+		## notice that len(x) == len(y)+1
+        self.refWorldlinePlot.plot(x, y, name="sink",title="test")
     
     def loadRandom(self, param):
         path = os.path.abspath(os.path.dirname(__file__))
